@@ -1,9 +1,11 @@
 package com.lhzt.monitor.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
+@Component
 @ConfigurationProperties(prefix = "mysql.datasource")
 public class MySqlDataSoruceSetting {
 
