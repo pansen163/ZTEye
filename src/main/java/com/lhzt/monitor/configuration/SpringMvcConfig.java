@@ -25,10 +25,4 @@ public class SpringMvcConfig extends WebMvcConfigurerAdapter {
     return  viewResolver;
   }
 
-  @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    //super.addResourceHandlers(registry);
-    //addResourceLocations指的是文件放置的目录，addResourceHandler指的是对外暴露的访问路径
-    registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/assets/");
-  }
 }
