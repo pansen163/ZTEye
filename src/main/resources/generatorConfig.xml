@@ -95,32 +95,32 @@
                selectByExampleQueryId="false">
         </table >
 
-        <table tableName="sys_resource"
-               domainObjectName="SysResource"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
-        </table >
+        <!--<table tableName="sys_resource"-->
+               <!--domainObjectName="SysResource"-->
+               <!--enableCountByExample="false"-->
+               <!--enableUpdateByExample="false"-->
+               <!--enableDeleteByExample="false"-->
+               <!--enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+        <!--</table >-->
 
-        <table tableName="sys_user"
-               domainObjectName="SysUser"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
-        </table >
+        <!--<table tableName="sys_user"-->
+               <!--domainObjectName="SysUser"-->
+               <!--enableCountByExample="false"-->
+               <!--enableUpdateByExample="false"-->
+               <!--enableDeleteByExample="false"-->
+               <!--enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+        <!--</table >-->
 
-        <table tableName="sys_role"
-               domainObjectName="SysRole"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
-        </table >
+        <!--<table tableName="sys_role"-->
+               <!--domainObjectName="SysRole"-->
+               <!--enableCountByExample="false"-->
+               <!--enableUpdateByExample="false"-->
+               <!--enableDeleteByExample="false"-->
+               <!--enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+        <!--</table >-->
 
 
         <!--<table tableName="contract" schema="ztbi">-->

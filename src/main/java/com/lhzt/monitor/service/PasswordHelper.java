@@ -45,4 +45,15 @@ public class PasswordHelper {
 
     user.setPassword(newPassword);
   }
+
+  public static void main(String[] args){
+    User user=new User();
+    user.setUsername("admin");
+    user.setPassword("123456");
+    PasswordHelper passwordHelper=new PasswordHelper();
+    passwordHelper.encryptPassword(user);;
+    System.out.println(user.getUsername());
+    System.out.println(user.getPassword());
+    System.out.println(user.getSalt());
+  }
 }

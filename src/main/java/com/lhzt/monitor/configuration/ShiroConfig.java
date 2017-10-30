@@ -18,6 +18,7 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +35,7 @@ import javax.servlet.Filter;
  * Created by pansen on 2017/10/30.
  */
 @Configuration
-@Import(CacheConfig.class)
+@Import({CacheConfig.class, SpringContextUtil.class})
 public class ShiroConfig {
 
   //Shiro的Web过滤器
@@ -74,7 +75,7 @@ public class ShiroConfig {
   //Realm实现
   @Bean
   public UserRealm getUserRealm(CredentialsMatcher matcher) {
-    UserService userService = (UserService) SpringContextUtil.getBean(UserService.class);
+    UserService userService = new UserService();
     UserRealm myShiroRealm = new UserRealm();
     myShiroRealm.setUserService(userService);
     myShiroRealm.setCredentialsMatcher(matcher);
@@ -141,32 +142,34 @@ public class ShiroConfig {
         sessionValidationScheduler =
         new QuartzSessionValidationScheduler();
     sessionValidationScheduler.setSessionValidationInterval(1800000);
-    sessionValidationScheduler.setSessionManager(getDefaultWebSessionManager());
+    DefaultWebSessionManager manager = getDefaultWebSessionManager(sessionValidationScheduler);
+    sessionValidationScheduler.setSessionManager(manager);
     return sessionValidationScheduler;
   }
 
   //会话管理器
   @Bean
-  public DefaultWebSessionManager getDefaultWebSessionManager() {
+  public DefaultWebSessionManager getDefaultWebSessionManager(
+      QuartzSessionValidationScheduler sessionValidationScheduler) {
     DefaultWebSessionManager manager = new DefaultWebSessionManager();
     manager.setGlobalSessionTimeout(1800000);
     manager.setDeleteInvalidSessions(true);
     manager.setSessionValidationSchedulerEnabled(true);
-    manager.setSessionValidationScheduler(getQuartzSessionValidationScheduler());
+    manager.setSessionValidationScheduler(sessionValidationScheduler);
     manager.setSessionDAO(getEnterpriseCacheSessionDAO());
     manager.setSessionIdCookieEnabled(true);
     manager.setSessionIdCookie(getSimpleCookie());
-
     return manager;
   }
 
   //安全管理器
   @Bean
   public SecurityManager getDefaultWebSecurityManager(
-      SpringCacheManagerWrapper springCacheManagerWrapper,UserRealm userRealm) {
+      SpringCacheManagerWrapper springCacheManagerWrapper, UserRealm userRealm,
+      DefaultWebSessionManager defaultWebSessionManager) {
     DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
     manager.setRealm(userRealm);
-    manager.setSessionManager(getDefaultWebSessionManager());
+    manager.setSessionManager(defaultWebSessionManager);
     manager.setCacheManager(springCacheManagerWrapper);
     return manager;
   }
@@ -192,7 +195,7 @@ public class ShiroConfig {
 
   @Bean
   public SysUserFilter getSysUserFilter() {
-    UserService userService = (UserService) SpringContextUtil.getBean(UserService.class);
+    UserService userService = new UserService();
     SysUserFilter sysUserFilter = new SysUserFilter();
     sysUserFilter.setUserService(userService);
     return sysUserFilter;
@@ -200,11 +203,10 @@ public class ShiroConfig {
 
   /**
    * 开启shiro aop注解支持. 使用代理方式;所以需要开启代码支持;
-   * @param securityManager
-   * @return
    */
   @Bean
-  public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(SecurityManager securityManager) {
+  public AuthorizationAttributeSourceAdvisor getAuthorizationAttributeSourceAdvisor(
+      SecurityManager securityManager) {
     AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
     advisor.setSecurityManager(securityManager);
     return advisor;
