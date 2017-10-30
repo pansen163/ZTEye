@@ -30,6 +30,6 @@ public class UserService {
   public Set<String> findPermissions(String userName) {
     Set<String> permissions = new HashSet<>();
     permissions.add("user:create");
-    return null;
+    return permissions;
   }
 }

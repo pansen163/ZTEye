@@ -21,6 +21,7 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,12 +36,13 @@ import javax.servlet.Filter;
  * Created by pansen on 2017/10/30.
  */
 @Configuration
-@Import({CacheConfig.class, SpringContextUtil.class})
+@Import({CacheConfig.class, UserService.class})
 public class ShiroConfig {
 
   //Shiro的Web过滤器
   @Bean
-  public ShiroFilterFactoryBean getShiroFilterFactoryBean(SecurityManager securityManager) {
+  public ShiroFilterFactoryBean getShiroFilterFactoryBean(SecurityManager securityManager,
+                                                          SysUserFilter sysUserFilter) {
     ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
     // 必须设置 SecurityManager
@@ -48,15 +50,14 @@ public class ShiroConfig {
 
     // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
     shiroFilterFactoryBean.setLoginUrl("/login");
-    // 登录成功后要跳转的链接
-    shiroFilterFactoryBean.setSuccessUrl("/index");
+    
     // 未授权界面;
     shiroFilterFactoryBean.setUnauthorizedUrl("/403");
 
     //过滤器
     Map<String, Filter> filters = new HashMap<>();
     filters.put("authc", getFormAuthenticationFilter());
-    filters.put("sysUser", getSysUserFilter());
+    filters.put("sysUser", sysUserFilter);
 
     // 拦截器.
     Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
@@ -74,8 +75,7 @@ public class ShiroConfig {
 
   //Realm实现
   @Bean
-  public UserRealm getUserRealm(CredentialsMatcher matcher) {
-    UserService userService = new UserService();
+  public UserRealm getUserRealm(CredentialsMatcher matcher, UserService userService) {
     UserRealm myShiroRealm = new UserRealm();
     myShiroRealm.setUserService(userService);
     myShiroRealm.setCredentialsMatcher(matcher);
@@ -122,7 +122,7 @@ public class ShiroConfig {
   public SimpleCookie getSimpleCookie() {
     SimpleCookie simpleCookie = new SimpleCookie("sid");
     simpleCookie.setHttpOnly(true);
-    simpleCookie.setMaxAge(-1);
+    simpleCookie.setMaxAge(1800000);
     return simpleCookie;
   }
 
@@ -194,8 +194,7 @@ public class ShiroConfig {
   }
 
   @Bean
-  public SysUserFilter getSysUserFilter() {
-    UserService userService = new UserService();
+  public SysUserFilter getSysUserFilter(UserService userService) {
     SysUserFilter sysUserFilter = new SysUserFilter();
     sysUserFilter.setUserService(userService);
     return sysUserFilter;
