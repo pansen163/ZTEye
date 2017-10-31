@@ -18,7 +18,7 @@ package com.lhzt.monitor.annotation;
 
 
 
-import com.lhzt.monitor.Constants.Constants;
+import com.lhzt.monitor.constants.Constants;
 
 import java.lang.annotation.*;
 
